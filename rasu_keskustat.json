@@ -74,7 +74,8 @@
 			},
 			"properties" : {
 				"S_alue" : "Nokia",
-				"fid" : 52818
+				"fid" : 52818,
+				"color": "#ff0000"
 			}
 		},
 		{
