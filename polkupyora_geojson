@@ -1,0 +1,33 @@
+let
+    // 1. WFS-URL
+    SourceUrl =
+        "https://kartta.hel.fi/ws/geoserver/avoindata/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&SRSNAME=EPSG:4326&TYPENAME=avoindata:polkupyoralaskennat&outputFormat=application/json",
+
+    // 2. Lataa WFS JSON
+    Raw = Json.Document(Web.Contents(SourceUrl)),
+    Features = Raw[features],
+
+    // 3. Muodosta GeoJSON FeatureCollection
+    ConvertFeatures =
+        List.Transform(
+            Features,
+            each [
+                type = "Feature",
+                geometry = [
+                    type = "LineString",
+                    coordinates = _[geometry][coordinates]
+                ],
+                properties = _[properties]
+            ]
+        ),
+
+    GeoJson =
+        [
+            type = "FeatureCollection",
+            features = ConvertFeatures
+        ],
+
+    // 4. Muunna GeoJSON tekstiksi (string)
+    GeoJsonText = Json.FromValue(GeoJson)
+in
+    GeoJsonText
